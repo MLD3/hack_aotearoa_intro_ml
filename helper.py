@@ -21,7 +21,7 @@ import yaml
 config = yaml.load(open('config.yaml'))
 
 
-def get_train_test_split():
+def get_train_test_split(config):
     """
     This function performs the following steps:
     - Reads in the data from data/labels.csv and data/files/*.csv (keep only the first 2,500 examples)
@@ -43,7 +43,7 @@ def get_train_test_split():
     raw_data = {}
     for i in tqdm(IDs, desc='Loading files from disk'):
         raw_data[i] = pd.read_csv('data/subset_files/{}.csv'.format(i))
-    features = Parallel(n_jobs=16)(delayed(generate_feature_vector)(df) for _, df in tqdm(raw_data.items(), desc='Generating feature vectors'))
+    features = Parallel(n_jobs=16)(delayed(generate_feature_vector)(df, config) for _, df in tqdm(raw_data.items(), desc='Generating feature vectors'))
     df_features = pd.DataFrame(features).sort_index(axis=1)
     feature_names = df_features.columns.tolist()
     X, y = df_features.values, df_labels['In-hospital_death'].values
@@ -54,7 +54,7 @@ def get_train_test_split():
 
 
 
-def generate_feature_vector(df):
+def generate_feature_vector(df, config):
     """
     Reads a dataframe containing all measurements for a single patient
     within the first 48 hours of the ICU admission, and convert it into
