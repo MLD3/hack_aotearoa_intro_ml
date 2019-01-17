@@ -17,8 +17,8 @@ from tqdm import tqdm
 from sklearn.externals.joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 
-import yaml
-config = yaml.load(open('config.yaml'))
+#import yaml
+#config = yaml.load(open('config.yaml'))
 
 
 def get_train_test_split(config):
